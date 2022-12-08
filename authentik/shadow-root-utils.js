@@ -110,7 +110,7 @@ let notifyShadowRootListeners = () => {
   }
 };
 
-window.addShadowRootListener = (listener) => {
+addShadowRootListener = (listener) => {
   if (!listenerContexts.find(v => v.listener == listener)) listenerContexts.push({
     listener: listener,
     nodes: []
