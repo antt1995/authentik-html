@@ -156,4 +156,4 @@ class _AKUtils {
     }
   }
 }
-const AKUtils = new _AKUtils("{{SCRIPT_URLS}}");
+window.AKUtils = new _AKUtils("{{SCRIPT_URLS}}");
