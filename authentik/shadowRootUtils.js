@@ -117,8 +117,6 @@ window.addShadowRootListener = (listener) => {
   notifyShadowRootListeners();
 }
 
-if (document.readyState !== "complete")
-  document.addEventListener("DOMContentLoaded", () => monitorShadowRoots());
-if (document.readyState === "complete")
+(function() {
   monitorShadowRoots()
-//monitorShadowRoots(document.documentElement);
+})();
