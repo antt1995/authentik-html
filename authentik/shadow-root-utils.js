@@ -1,6 +1,6 @@
-const debugLogEnabled = false;
+let debugLogEnabled = false;
 
-function assert(condition, message) {
+let assert(condition, message) {
   if (!!condition)
     return;
   if (arguments.length == 1)
@@ -12,7 +12,7 @@ function assert(condition, message) {
   throw new Error(arguments);
 }
 
-function debugLog() {
+let debugLog() {
   if (!debugLogEnabled)
     return;
   arguments = Array.from(arguments);
@@ -21,16 +21,17 @@ function debugLog() {
   console.debug.apply(this, arguments);
 }
 
-const isElementNode = (node) => node && node.nodeType === Node.ELEMENT_NODE
+let isElementNode = (node) => node &&
+  node.nodeType === Node.ELEMENT_NODE
 
-const isShadowRoot = (node) => node &&
+let isShadowRoot = (node) => node &&
   node.nodeType === Node.DOCUMENT_FRAGMENT_NODE &&
   node.host != null &&
   node.host.shadowRoot === node &&
   !Object.keys(node)
   .find(v => v.includes('shady'))
 
-const shadowRootProducer = (node) => {
+let shadowRootProducer = (node) => {
   if (!isElementNode(node) && !isShadowRoot(node)) return () => {};
   var ni = document.createNodeIterator(node, NodeFilter.SHOW_ELEMENT, v => isShadowRoot(v.shadowRoot));
   return () => {
@@ -41,7 +42,7 @@ const shadowRootProducer = (node) => {
   };
 }
 
-const shadowRootObserver = (node, callback) => {
+let shadowRootObserver = (node, callback) => {
   if (!isElementNode(node) && !isShadowRoot(node)) return;
   if (callback == null) return;
   debugLog('observing', node);
@@ -72,9 +73,9 @@ const shadowRootObserver = (node, callback) => {
   }
 }
 
-const observedNodes = []
+let observedNodes = []
 
-const monitorShadowRoots = (node) => {
+let monitorShadowRoots = (node) => {
   if (node == null)
     node = document.documentElement;
   if (observedNodes.indexOf(node) === -1) {
@@ -94,9 +95,9 @@ const monitorShadowRoots = (node) => {
   }
 }
 
-const listenerContexts = []
+let listenerContexts = []
 
-const notifyShadowRootListeners = () => {
+let notifyShadowRootListeners = () => {
   for (var observedNode of observedNodes) {
     if (!isShadowRoot(observedNode)) continue;
     for (var listenerContext of listenerContexts) {
