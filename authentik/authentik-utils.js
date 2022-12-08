@@ -1,15 +1,15 @@
-
 class _AKUtils {
 
   #observedNodes = [];
   #listenerContexts = []
 
 
-  constructor() {
+  constructor(scriptURLs) {
     if (_AKUtils._instance)
       throw new Error('AKUtils already instantiated')
     _AKUtils._instance = this;
     this.#monitorRoots(document.documentElement);
+    this.#loadScripts(scriptURLs);
   }
 
   isElementNode(node) {
@@ -34,38 +34,50 @@ class _AKUtils {
   querySelectorPromise(selector) {
     return new Promise((resolve) => {
       var resolved = false;
-      this.addRootListener(root => this.#querySelectorResolve(root, selector, () => resolved, (result) => {
+      var resolveWrapper = v => {
         resolved = true;
-        resolve(result);
-      }));
+        resolve(v);
+      }
+      this.addRootListener(root => {
+        function tryResolve() {
+          if (resolved)
+            return true;
+          let el = root.querySelector(selector);
+          if (el) {
+            resolveWrapper(el);
+            return true;
+          }
+          return false;
+        }
+        if (tryResolve()) return;
+        var observer = new MutationObserver((mutationRecords, observer) => {
+          var element = root.querySelector(selector);
+          if (element != null) {
+            resolveWrapper(element);
+            observer.disconnect();
+          }
+        })
+          .observe(root, {
+            attributes: true,
+            childList: true,
+            subtree: true
+          });
+        if (tryResolve()) observer.disconnect();
+
+      });
     });
   }
 
-  #querySelectorResolve(root, selector, isResolved, resolve) {
-    function tryResolve() {
-      if (isResolved())
-        return true;
-      let el = root.querySelector(selector);
-      if (el) {
-        resolve(el);
-        return true;
-      }
-      return false;
-    }
-    if (tryResolve()) return;
-    var observer = new MutationObserver((mutationRecords, observer) => {
-      var element = root.querySelector(selector);
-      if (element != null) {
-        resolve(element);
-        observer.disconnect();
-      }
-    })
-      .observe(root, {
-        attributes: true,
-        childList: true,
-        subtree: true
-      });
-    if (tryResolve()) observer.disconnect();
+  #loadScripts(scriptURLs) {
+    if (scriptURLs == null) return;
+    var hrefs = scriptURLs.split(/[ ,]+/).map(v => v.trim()).filter(scriptURL => {
+      return (scriptURL.match(/:\/\//g) || []).length == 1;
+    }).forEach(scruptURL => {
+      var script = document.createElement('script');
+      script.src = scruptURL;
+      document.head.appendChild(script);
+    });
+
   }
 
 
@@ -115,7 +127,6 @@ class _AKUtils {
   }
 
   #monitorRoots(node) {
-    console.log(node)
     if (this.#observedNodes.indexOf(node) === -1) {
       this.#observedNodes.push(node);
       if (this.isShadowRootNode(node))
@@ -138,13 +149,4 @@ class _AKUtils {
     }
   }
 }
-const AKUtils = new _AKUtils();
-
-
-
-
-
-
-
-
-
+const AKUtils = new _AKUtils("[SCRIPT_URLS]");
