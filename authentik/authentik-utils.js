@@ -31,6 +31,13 @@ class _AKUtils {
     this.#notifyRootListeners();
   };
 
+  querySelectorAllNative(root, selector) {
+    if (!root.__shady_native_querySelectorAll)
+      return root.querySelectorAll(selector);
+    else
+      return root.__shady_native_querySelectorAll(selector);
+  }
+
   querySelectorPromise(selector) {
     return new Promise((resolve) => {
       var resolved = false;
