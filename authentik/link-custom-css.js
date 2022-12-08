@@ -8,7 +8,4 @@ let appendCustomCSS = (el) => {
   .prepend(link);
 }
 
-if (document.readyState !== "complete")
-  document.addEventListener("DOMContentLoaded", () => addShadowRootListener(appendCustomCSS));
-if (document.readyState === "complete")
-  addShadowRootListener(appendCustomCSS)
+window.addShadowRootListener(appendCustomCSS)
