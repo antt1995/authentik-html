@@ -16,7 +16,6 @@ window.addShadowRootListener = (function() {
     return () => {
       var next = ni.nextNode();
       if (next == null) return;
-      debugLog('produced', next);
       return next.shadowRoot;
     };
   }
@@ -24,7 +23,6 @@ window.addShadowRootListener = (function() {
   let shadowRootObserver = (node, callback) => {
     if (!isElementNode(node) && !isShadowRoot(node)) return;
     if (callback == null) return;
-    debugLog('observing', node);
     let observeCallback = (mutations) => {
       var nodes = mutations.flatMap(mutation => {
           return Array.from(mutation.addedNodes)
@@ -32,11 +30,7 @@ window.addShadowRootListener = (function() {
         })
         .filter(v => v != null)
         .map(v => v.shadowRoot)
-        .filter(isShadowRoot)
-        .map(v => {
-          debugLog('add mutation', v);
-          return v;
-        });
+        .filter(isShadowRoot);
       nodes.forEach(callback);
     }
     var observeOptions = {
@@ -65,7 +59,6 @@ window.addShadowRootListener = (function() {
       }
       shadowRootObserver(node, shadowRoot => monitorShadowRoots(shadowRoot));
     }
-    debugLog('monitorShadowRoots', node);
     var producer = shadowRootProducer(node);
     var shadowRoot;
     while (shadowRoot = producer()) {
