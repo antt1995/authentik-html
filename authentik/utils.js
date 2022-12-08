@@ -22,7 +22,13 @@ function debugLog() {
 }
 
 const isElementNode = (node) => node && node.nodeType === Node.ELEMENT_NODE
-const isShadowRoot = (node) => node && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE && node.host != null && node.host.shadowRoot === node
+const isShadowRoot = (node) => node &&
+  node.nodeType === Node.DOCUMENT_FRAGMENT_NODE &&
+  node.host != null &&
+  node.host.shadowRoot === node &&
+  !Object.keys(node)
+  .map(v => v.includes('shady'))
+  .find(v => v);
 const shadowRootProducer = (node) => {
   if (!isElementNode(node) && !isShadowRoot(node)) return () => {};
   var ni = document.createNodeIterator(node, NodeFilter.SHOW_ELEMENT, v => isShadowRoot(v.shadowRoot));
@@ -89,3 +95,18 @@ window.observeShadowRoots = (node, callback) => {
     observeShadowRoots(shadowRoot, callback);
   }
 }
+
+
+window.addEventListener("load", () => {
+  console.log('load');
+  //  observeShadowRoots(document.documentElement);
+});
+document.addEventListener("DOMContentLoaded", () => {
+  console.log('DOMContentLoaded');
+  observeShadowRoots(document, dom => {
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.textContent = 'input { background-color: red !important; }';
+    (dom.head || dom)
+    .appendChild(style);
+  });
