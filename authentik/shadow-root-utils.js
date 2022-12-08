@@ -1,6 +1,15 @@
 let debugLogEnabled = false;
 
-let assert(condition, message) {
+function debugLog() {
+  if (!debugLogEnabled)
+    return;
+  arguments = Array.from(arguments);
+  if (arguments[1] != null && isShadowRoot(arguments[1]))
+    arguments.splice(1, 0, arguments[1].host);
+  console.debug.apply(this, arguments);
+}
+
+function assert(condition, message) {
   if (!!condition)
     return;
   if (arguments.length == 1)
@@ -10,15 +19,6 @@ let assert(condition, message) {
     arguments.shift();
   }
   throw new Error(arguments);
-}
-
-let debugLog() {
-  if (!debugLogEnabled)
-    return;
-  arguments = Array.from(arguments);
-  if (arguments[1] != null && isShadowRoot(arguments[1]))
-    arguments.splice(1, 0, arguments[1].host);
-  console.debug.apply(this, arguments);
 }
 
 let isElementNode = (node) => node &&
