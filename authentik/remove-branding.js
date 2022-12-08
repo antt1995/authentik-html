@@ -11,12 +11,20 @@
           return document.__shady_native_querySelectorAll(v);
       };
     }
-    for (var filter of ['https://goauthentik.io', 'https://unsplash.com'])
+    for (var filter of ['https://goauthentik.io', 'https://unsplash.com']) {
       querySelectorAllFunc('[href^="' + filter + '"]')
-      .forEach(v => v.parentElement.remove());
+        .forEach(v => v.parentElement.remove());
+    }
   };
 
-  removeBranding();
-  window.addShadowRootListener(removeBranding);
+  let run = () => {
+    removeBranding();
+    window.addShadowRootListener(removeBranding);
+  };
 
+  if (document.readyState !== 'complete')
+    window.addEventListener('load', run);
+  if (document.readyState === 'complete')
+    run();
+    
 })()
