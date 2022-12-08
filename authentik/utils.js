@@ -4,7 +4,7 @@ function assert(condition, message) {
   if (!!condition)
     return;
   if (arguments.length == 1)
-    arguments = ["assertion failed"];
+    arguments = ['assertion failed'];
   else {
     arguments = Array.from(arguments);
     arguments.shift();
@@ -51,12 +51,17 @@ const shadowRootObserver = (node, callback) => {
       });
     nodes.forEach(callback);
   }
-  new MutationObserver(observeCallback)
-    .observe(node, {
-      attributes: false,
-      childList: true,
-      subtree: true
-    });
+  var observeOptions = {
+    attributes: false,
+    childList: true,
+    subtree: true
+  };
+  try {
+    new MutationObserver(observeCallback)
+      .observe(node, observeOptions);
+  } catch (e) {
+    console.error('observe failed', node, e);
+  }
 }
 
 const observing = []
