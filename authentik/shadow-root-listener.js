@@ -1,28 +1,5 @@
 window.addShadowRootListener = (function() {
 
-  let debugLogEnabled = false;
-
-  function debugLog() {
-    if (!debugLogEnabled)
-      return;
-    arguments = Array.from(arguments);
-    if (arguments[1] != null && isShadowRoot(arguments[1]))
-      arguments.splice(1, 0, arguments[1].host);
-    console.debug.apply(this, arguments);
-  }
-
-  function assert(condition, message) {
-    if (!!condition)
-      return;
-    if (arguments.length == 1)
-      arguments = ['assertion failed'];
-    else {
-      arguments = Array.from(arguments);
-      arguments.shift();
-    }
-    throw new Error(arguments);
-  }
-
   let isElementNode = (node) => node &&
     node.nodeType === Node.ELEMENT_NODE
 
