@@ -1,5 +1,4 @@
 window.addShadowRootListener((el) => {
-  console.log("appending css")
   var link = document.createElement('link');
   link.rel = 'stylesheet'
   link.type = 'text/css';
