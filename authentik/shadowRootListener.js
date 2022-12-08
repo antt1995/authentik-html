@@ -1,4 +1,4 @@
-(function() {
+window.addShadowRootListener = (function() {
 
   let debugLogEnabled = false;
 
@@ -112,13 +112,14 @@
     }
   };
 
-  window.addShadowRootListener = (listener) => {
+  monitorShadowRoots();
+
+  return (listener) => {
     if (!listenerContexts.find(v => v.listener == listener)) listenerContexts.push({
       listener: listener,
       nodes: []
     })
     notifyShadowRootListeners();
-  }
-  monitorShadowRoots();
+  };
 
 })();
