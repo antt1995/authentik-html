@@ -1,4 +1,4 @@
-const appendCustomCSS = (el) => {
+let appendCustomCSS = (el) => {
   console.log("appending css")
   var link = document.createElement('link');
   link.rel = 'stylesheet'
@@ -8,6 +8,7 @@ const appendCustomCSS = (el) => {
   .prepend(link);
 }
 
-(function() {
+if (document.readyState !== "complete")
+  document.addEventListener("DOMContentLoaded", () => addShadowRootListener(appendCustomCSS));
+if (document.readyState === "complete")
   addShadowRootListener(appendCustomCSS)
-})()
