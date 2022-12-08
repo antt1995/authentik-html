@@ -27,8 +27,7 @@ const isShadowRoot = (node) => node &&
   node.host != null &&
   node.host.shadowRoot === node &&
   !Object.keys(node)
-  .map(v => v.includes('shady'))
-  .find(v => v);
+  .find(v => v.includes('shady'))
 const shadowRootProducer = (node) => {
   if (!isElementNode(node) && !isShadowRoot(node)) return () => {};
   var ni = document.createNodeIterator(node, NodeFilter.SHOW_ELEMENT, v => isShadowRoot(v.shadowRoot));
@@ -110,3 +109,10 @@ document.addEventListener("DOMContentLoaded", () => {
     (dom.head || dom)
     .appendChild(style);
   });
+
+
+
+
+});
+console.log('start')
+//observeShadowRoots(document.documentElement);
