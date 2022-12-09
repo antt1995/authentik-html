@@ -169,7 +169,7 @@ class _AKUtils {
       var ni = document.createNodeIterator(root, NodeFilter.SHOW_ELEMENT, v => this.isShadowRootNode(v.shadowRoot));
       var sh;
       while (sh = ni.nextNode())
-        addShadowRoot(sh.sha);
+        addShadowRoot(sh.shadowRoot);
     }
   }
 
