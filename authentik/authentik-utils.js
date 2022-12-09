@@ -104,9 +104,7 @@ class _AKUtils {
         (root.head || root).prepend(link);
       }
     });
-
   }
-
 
   #notifyRootListeners() {
     for (var observedNode of this.#observedNodes) {
