@@ -20,7 +20,7 @@ for FILE in $DIST_DIR/flow/*; do
 done
 
 #---INJECT URLS
-printf "\n\n//***** AKUtils Sscript *****\n\n" >> $DIST_DIR/poly.js
+printf "\n\n//***** AKUtils Script Start *****\n\n" >> $DIST_DIR/poly.js
 if [ ! -z "$AUTHENTIK_UTILS_SCRIPT_URL" ]; then
     curl -fsSL $AUTHENTIK_UTILS_SCRIPT_URL >> $DIST_DIR/poly.js
 else
@@ -34,6 +34,6 @@ while IFS='=' read -r -d '' n v; do
     fi
 done < <(env -0 | sort -z)
 sed -i "s|{{AUTHENTIK_INJECT_URLS}}|$AUTHENTIK_INJECT_URLS|g" $DIST_DIR/poly.js
-
+printf "\n\n//***** AKUtils Script END *****\n\n" >> $DIST_DIR/poly.js
 
 /usr/local/bin/dumb-init -- /lifecycle/ak worker
