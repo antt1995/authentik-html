@@ -50,6 +50,7 @@ class _AKUtils {
   }
 
   querySelectorPromise(selector) {
+    var querySelectorNative = this.querySelectorNative;
     return new Promise((resolve) => {
       var resolved = false;
       var resolveWrapper = v => {
@@ -60,7 +61,7 @@ class _AKUtils {
         function tryResolve() {
           if (resolved)
             return true;
-          let el = this.querySelectorNative(selector, root);
+          let el = querySelectorNative(selector, root);
           if (el) {
             resolveWrapper(el);
             return true;
@@ -69,7 +70,7 @@ class _AKUtils {
         }
         if (tryResolve()) return;
         var observer = new MutationObserver((mutationRecords, observer) => {
-          var element = this.querySelectorNative(selector, root);
+          var element = querySelectorNative(selector, root);
           if (element != null) {
             resolveWrapper(element);
             observer.disconnect();
