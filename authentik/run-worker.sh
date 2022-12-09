@@ -2,7 +2,7 @@ DIST_DIR=web/dist
 
 #---CUSTOM BACKGROUND
 if [ ! -z "$AUTHENTIK_FLOW_BACKGROUND_URL" ]; then
-    curl -o $DIST_DIR/assets/images/flow_background.jpg $AUTHENTIK_FLOW_BACKGROUND_URL
+    curl -fsSL -o $DIST_DIR/assets/images/flow_background.jpg $AUTHENTIK_FLOW_BACKGROUND_URL
 fi
 
 #---HIDE FOOTER CONTENT
