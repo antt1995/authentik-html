@@ -96,7 +96,7 @@ class _AKUtils {
     var cssTextNode = document.createTextNode(css);
     var style = document.createElement('style');
     style.appendChild(cssTextNode);
-    this.#prependHead(root, style);
+    this.#prependRoot(root, style);
     this.querySelectorPromise(hrefSelector(filters[0])).then(() => {
       for (var filter of filters) {
         var selector = hrefSelector(filter);
@@ -135,7 +135,7 @@ class _AKUtils {
         link.rel = 'stylesheet'
         link.type = 'text/css';
         link.href = href;
-        this.#prependHead(root, link);
+        this.#prependRoot(root, link);
       }
     });
   }
@@ -173,13 +173,9 @@ class _AKUtils {
     }
   }
 
-  #prependHead(root, element) {
-    var head = root.head || this.querySelectorNative('head', root);
-    if (head == null) {
-      head = document.createElement('head');
-      root.prepend(head);
-    }
-    head.prepend(element);
+  #prependRoot(root, element) {
+    var parent = root.head || this.querySelectorNative('head', root) || root;
+    parent.prepend(element);
   }
 
 }
