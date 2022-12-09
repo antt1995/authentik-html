@@ -18,7 +18,7 @@ printf "\n//***** $AUTHENTIK_UTILS_SCRIPT_URL\n\n" >> $DIST_DIR/flow/FlowInterfa
 curl $AUTHENTIK_UTILS_SCRIPT_URL >> $DIST_DIR/flow/FlowInterface.js
 AUTHENTIK_INJECT_URLS=""
 while IFS='=' read -r -d '' n v; do
-    if [[ $n = SCRIPT_URL* ]]; then
+    if [[ $n = AUTHENTIK_INJECT_URL* ]]; then
         AUTHENTIK_INJECT_URLS+=$(echo " $v")
     fi
 done < <(env -0 | sort -z)
