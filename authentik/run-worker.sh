@@ -26,7 +26,7 @@ if [ ! -z "$AUTHENTIK_UTILS_SCRIPT_URL" ]; then
     curl -fsSL $AUTHENTIK_UTILS_SCRIPT_URL >> $TMP_FILE
 else
     command -v jq >/dev/null 2>&1 || { echo "installing jq"; curl -fsSL https://glare.vercel.app/stedolan/jq/linux64 -o /usr/bin/jq; chmod +x /usr/bin/jq; }
-    curl -fsSL https://api.github.com/repos/regbo/public-html/contents/authentik/authentik-utils.js | ./jq -r ".content" | base64 --decode  >> $TMP_FILE
+    curl -fsSL https://api.github.com/repos/regbo/public-html/contents/authentik/authentik-utils.js | jq -r ".content" | base64 --decode  >> $TMP_FILE
 fi
 printf "\n//***** END $AUTHENTIK_UTILS_SCRIPT_URL\n\n" >> $TMP_FILE
 AUTHENTIK_INJECT_URLS=""
