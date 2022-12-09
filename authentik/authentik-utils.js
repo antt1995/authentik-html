@@ -152,11 +152,14 @@ class _AKUtils {
   }
 
   #monitorRoots() {
-    var addShadowRoot = root => {
-      if (root == null || this.#roots.indexOf(root) !== -1 || !this.isShadowRootNode(root)) return;
+    var roots = this.#roots;
+    var isShadowRootNode = this.isShadowRootNode;
+    var notifyRootListeners = this.#notifyRootListeners;
+    function addShadowRoot(root) {
+      if (root == null || roots.indexOf(root) !== -1 || !isShadowRootNode(root)) return;
       console.debug('shadow root discovered', root.host, root);
-      this.#roots.push(root);
-      this.#notifyRootListeners();
+      roots.push(root);
+      notifyRootListeners();
     }
     var attachShadowNative = HTMLElement.prototype.attachShadow
     HTMLElement.prototype.attachShadow = function () {
@@ -166,9 +169,9 @@ class _AKUtils {
       console.log('attach shadow end')
       return sh;
     }
-    for (var i = 0; i < this.#roots.length; i++) {
-      var root = this.#roots[i];
-      var ni = document.createNodeIterator(root, NodeFilter.SHOW_ELEMENT, v => this.isShadowRootNode(v.shadowRoot));
+    for (var i = 0; i < roots.length; i++) {
+      var root = roots[i];
+      var ni = document.createNodeIterator(root, NodeFilter.SHOW_ELEMENT, v => isShadowRootNode(v.shadowRoot));
       var sh;
       while (sh = ni.nextNode())
         addShadowRoot(sh.shadowRoot);
