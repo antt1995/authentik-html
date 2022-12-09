@@ -159,7 +159,7 @@ class _AKUtils {
       this.#notifyRootListeners();
     }
     var attachShadowNative = HTMLElement.prototype.attachShadow
-    HTMLElement.prototype.attachShadow = option => {
+    HTMLElement.prototype.attachShadow = function (option) {
       var sh = attachShadowNative.call(this, option)
       addShadowRoot(sh.shadowRoot);
       return sh;
