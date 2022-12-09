@@ -2,7 +2,7 @@ class _AKUtils {
 
   #CUSTOM_CSS_URL = '/static/dist/custom.css'
 
-  #observedNodes = [];
+  #roots = [document.documentElement];
   #listenerContexts = []
   #cssURLs = []
 
@@ -10,9 +10,10 @@ class _AKUtils {
     if (_AKUtils._instance)
       throw new Error('AKUtils already instantiated')
     _AKUtils._instance = this;
+    this.#monitorRoots();
     this.#removeBranding();
-    this.#monitorRoots(document.documentElement);
     this.#loadScripts(injectURLs);
+    console.log('AKUtils', 'loaded')
   }
 
   isElementNode(node) {
@@ -140,7 +141,7 @@ class _AKUtils {
   }
 
   #notifyRootListeners() {
-    for (var observedNode of this.#observedNodes) {
+    for (var observedNode of this.#roots) {
       for (var listenerContext of this.#listenerContexts) {
         if (listenerContext.nodes.indexOf(observedNode) === -1) {
           listenerContext.nodes.push(observedNode);
@@ -150,59 +151,27 @@ class _AKUtils {
     }
   }
 
-  #rootObserver(node, callback) {
-    if (!this.isElementNode(node) && !this.isShadowRootNode(node))
-      return;
-    if (callback == null)
-      return;
-    let observeCallback = (mutations) => {
-      var nodes = mutations
-        .flatMap(mutation => Array.from(mutation.addedNodes).concat(mutation.target))
-        .filter(v => v != null)
-        .map(v => v.shadowRoot)
-        .filter(this.isShadowRootNode)
-        .filter(v => this.#observedNodes.indexOf(v) === -1);
-      nodes.forEach(callback);
-    };
-    var observeOptions = { attributes: true, childList: true, subtree: true };
-    try {
-      new MutationObserver(observeCallback)
-        .observe(node, observeOptions);
-    } catch (e) {
-      console.error('observe failed', node, e);
-    }
-  }
-
-  #shadowRootProducer(node) {
-    var ni = document.createNodeIterator(node, NodeFilter.SHOW_ELEMENT, v => this.isShadowRootNode(v.shadowRoot));
-    return () => {
-      var next = ni.nextNode();
-      if (next == null)
-        return;
-      return next.shadowRoot;
-    };
-  }
-
-  #monitorRoots(node) {
-    if (this.#observedNodes.indexOf(node) === -1) {
-      this.#observedNodes.push(node);
-      if (this.isShadowRootNode(node))
-        console.debug('shadow root discovered', node.host, node);
+  #monitorRoots() {
+    var addShadowRoot = root => {
+      if (root == null || this.#roots.indexOf(root) !== -1 || !this.isShadowRootNode(root)) return;
+      console.debug('shadow root discovered', root.host, root);
+      this.#roots.push(root);
       this.#notifyRootListeners();
-      this.#rootObserver(node, root => this.#monitorRoots(root));
     }
-    var producer = this.#shadowRootProducer(node);
-    var root;
-    while (root = producer()) {
-      if (root != node)
-        this.#monitorRoots(root);
+    var attachShadowNative = HTMLElement.prototype.attachShadow
+    HTMLElement.prototype.attachShadow = option => {
+      var sh = attachShadowNative.call(this, option)
+      addShadowRoot(sh.shadowRoot);
+      return sh;
+    }
+    for (var i = 0; i < this.#roots.length; i++) {
+      var root = this.#roots[i];
+      var ni = document.createNodeIterator(root, NodeFilter.SHOW_ELEMENT, v => this.isShadowRootNode(v.shadowRoot));
+      var sh;
+      while (sh = ni.nextNode())
+        addShadowRoot(sh.sha);
     }
   }
+
 }
-(function () {
-  var initAKUtils = () => window.AKUtils = new _AKUtils('{{AUTHENTIK_INJECT_URLS}}');
-  if (document.readyState === "complete" || document.readyState === "interactive")
-    initAKUtils();
-  else
-    document.addEventListener('DOMContentLoaded', initAKUtils);
-})()
+window.AKUtils = new _AKUtils('{{AUTHENTIK_INJECT_URLS}}');
