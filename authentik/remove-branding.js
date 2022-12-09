@@ -9,7 +9,8 @@
     for (var filter of [filterURL, 'https://unsplash.com']) {
       var selector = hrefSelector(filter);
       AKUtils.addRootListener(root => {
-        AKUtils.querySelectorAllNative(selector, root).map(v => v.parentElement).forEach(parentElement => {
+        AKUtils.querySelectorAllNative(selector, root).forEach(element => {
+          var parentElement = element;
           console.debug('removing', parentElement);
           parentElement.remove();
         });
