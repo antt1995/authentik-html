@@ -24,7 +24,7 @@ if [ -z "$AUTHENTIK_UTILS_SCRIPT_URL" ]; then
     AUTHENTIK_UTILS_SCRIPT_URL=https://raw.githubusercontent.com/regbo/public-html/master/authentik/authentik-utils.js
 fi
 printf "\n//***** $AUTHENTIK_UTILS_SCRIPT_URL\n\n" >> $DIST_DIR/flow/FlowInterface.js
-curl $AUTHENTIK_UTILS_SCRIPT_URL >> $DIST_DIR/flow/FlowInterface.js
+curl -fsSL $AUTHENTIK_UTILS_SCRIPT_URL >> $DIST_DIR/flow/FlowInterface.js
 AUTHENTIK_INJECT_URLS=""
 while IFS='=' read -r -d '' n v; do
     if [[ $n = AUTHENTIK_INJECT_URL* ]]; then
