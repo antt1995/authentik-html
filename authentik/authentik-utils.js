@@ -60,7 +60,7 @@ class _AKUtils {
         function tryResolve() {
           if (resolved)
             return true;
-          let el = querySelectorNative(selector, root);
+          let el = this.querySelectorNative(selector, root);
           if (el) {
             resolveWrapper(el);
             return true;
@@ -69,7 +69,7 @@ class _AKUtils {
         }
         if (tryResolve()) return;
         var observer = new MutationObserver((mutationRecords, observer) => {
-          var element = querySelectorNative(selector, root);
+          var element = this.querySelectorNative(selector, root);
           if (element != null) {
             resolveWrapper(element);
             observer.disconnect();
