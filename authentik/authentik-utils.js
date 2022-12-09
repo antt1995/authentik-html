@@ -3,7 +3,6 @@ class _AKUtils {
   #observedNodes = [];
   #listenerContexts = []
 
-
   constructor(scriptURLs) {
     if (_AKUtils._instance)
       throw new Error('AKUtils already instantiated')
@@ -27,7 +26,7 @@ class _AKUtils {
   }
 
   addRootListener(listener) {
-    if (!this.#listenerContexts.find(v => v.listener == listener)) this.#listenerContexts.push(new this.#ListenerContext(listener))
+    if (!this.#listenerContexts.find(v => v.listener == listener)) this.#listenerContexts.push({ listener: listener, nodes: [] })
     this.#notifyRootListeners();
   };
 
@@ -149,11 +148,6 @@ class _AKUtils {
     }
   }
 
-  static #ListenerContext = class {
-    constructor(listener) {
-      this.listener = listener;
-      this.nodes = [];
-    }
-  }
+
 }
 window.AKUtils = new _AKUtils("{{SCRIPT_URLS}}");
