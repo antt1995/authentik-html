@@ -92,7 +92,7 @@ class _AKUtils {
     }
     this.addRootListener(root => {
       var hrefs = this.#cssURLs;
-      if (document.documentElement !== root)
+      if (document.documentElement === root)
         root = document;
       else
         hrefs = hrefs.concat(this.#CUSTOM_CSS_URL);
