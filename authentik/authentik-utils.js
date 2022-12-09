@@ -164,7 +164,7 @@ class _AKUtils {
         .filter(v => this.#observedNodes.indexOf(v) === -1);
       nodes.forEach(callback);
     };
-    var observeOptions = { attributes: false, childList: true, subtree: true };
+    var observeOptions = { attributes: true, childList: true, subtree: true };
     try {
       new MutationObserver(observeCallback)
         .observe(node, observeOptions);
