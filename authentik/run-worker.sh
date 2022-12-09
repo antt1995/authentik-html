@@ -1,4 +1,5 @@
-DIST_DIR=web/dist
+DIST_DIR=/dist
+cp -R web/dist/* $DIST_DIR
 
 #---CUSTOM BACKGROUND
 if [ ! -z "$AUTHENTIK_FLOW_BACKGROUND_URL" ]; then
@@ -23,7 +24,5 @@ while IFS='=' read -r -d '' n v; do
     fi
 done < <(env -0 | sort -z)
 sed -i "s|{{AUTHENTIK_INJECT_URLS}}|$AUTHENTIK_INJECT_URLS|g" $DIST_DIR/flow/FlowInterface.js
-
-cp -R $DIST_DIR/* /dist
 
 /usr/local/bin/dumb-init -- /lifecycle/ak worker
