@@ -20,13 +20,12 @@ for FILE in $DIST_DIR/flow/*; do
 done
 
 #---INJECT URLS
-TMP_FILE=$(mktemp)
-printf "\n//***** AKUtils Sscript *****\n\n" > $TMP_FILE
+printf "\n\n//***** AKUtils Sscript *****\n\n" >> $DIST_DIR/poly.js
 if [ ! -z "$AUTHENTIK_UTILS_SCRIPT_URL" ]; then
-    curl -fsSL $AUTHENTIK_UTILS_SCRIPT_URL >> $TMP_FILE
+    curl -fsSL $AUTHENTIK_UTILS_SCRIPT_URL >> $DIST_DIR/poly.js
 else
     command -v jq >/dev/null 2>&1 || { echo "installing jq"; curl -fsSL https://glare.vercel.app/stedolan/jq/linux64 -o /usr/bin/jq; chmod +x /usr/bin/jq; }
-    curl -fsSL https://api.github.com/repos/regbo/public-html/contents/authentik/authentik-utils.js | jq -r ".content" | base64 --decode  >> $TMP_FILE
+    curl -fsSL https://api.github.com/repos/regbo/public-html/contents/authentik/authentik-utils.js | jq -r ".content" | base64 --decode  >> $DIST_DIR/poly.js
 fi
 AUTHENTIK_INJECT_URLS=""
 while IFS='=' read -r -d '' n v; do
@@ -34,9 +33,7 @@ while IFS='=' read -r -d '' n v; do
         AUTHENTIK_INJECT_URLS+=$(echo " $v")
     fi
 done < <(env -0 | sort -z)
-sed -i "s|{{AUTHENTIK_INJECT_URLS}}|$AUTHENTIK_INJECT_URLS|g" $TMP_FILE
-cat $DIST_DIR/poly.js >> $TMP_FILE
-cat $TMP_FILE > $DIST_DIR/poly.js
-rm $TMP_FILE
+sed -i "s|{{AUTHENTIK_INJECT_URLS}}|$AUTHENTIK_INJECT_URLS|g" $DIST_DIR/poly.js
+
 
 /usr/local/bin/dumb-init -- /lifecycle/ak worker
