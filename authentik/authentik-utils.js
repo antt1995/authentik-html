@@ -160,8 +160,10 @@ class _AKUtils {
     }
     var attachShadowNative = HTMLElement.prototype.attachShadow
     HTMLElement.prototype.attachShadow = function () {
+      console.log('attach shadow start')
       var sh = attachShadowNative.apply(this, arguments)
       addShadowRoot(sh.shadowRoot);
+      console.log('attach shadow end')
       return sh;
     }
     for (var i = 0; i < this.#roots.length; i++) {
