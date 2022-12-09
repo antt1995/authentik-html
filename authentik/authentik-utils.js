@@ -198,7 +198,11 @@ class _AKUtils {
         this.#monitorRoots(root);
     }
   }
-
-
 }
-window.AKUtils = new _AKUtils('{{AUTHENTIK_INJECT_URLS}}');
+(function () {
+  var initAKUtils = () => window.AKUtils = new _AKUtils('{{AUTHENTIK_INJECT_URLS}}');
+  if (document.readyState === "complete" || document.readyState === "interactive")
+    initAKUtils();
+  else
+    document.addEventListener('DOMContentLoaded', initAKUtils);
+})()
