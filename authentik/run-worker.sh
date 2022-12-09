@@ -6,6 +6,11 @@ if [ ! -z "$AUTHENTIK_FLOW_BACKGROUND_URL" ]; then
     curl -fsSL -o $DIST_DIR/assets/images/flow_background.jpg $AUTHENTIK_FLOW_BACKGROUND_URL
 fi
 
+#---CUSTOM ICON
+if [ ! -z "$AUTHENTIK_BRAND_ICON_URL" ]; then
+    curl -fsSL -o $DIST_DIR/assets/icons/icon_left_brand.svg $AUTHENTIK_BRAND_ICON_URL
+fi
+
 #---HIDE FOOTER CONTENT
 for FILE in $DIST_DIR/flow/*; do
     FILTERS="https://goauthentik.io https://unsplash.com"
