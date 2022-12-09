@@ -1,14 +1,17 @@
 class _AKUtils {
 
+  #CUSTOM_CSS_URL = '/static/dist/custom.css'
+
   #observedNodes = [];
   #listenerContexts = []
+  #cssURLs = []
 
-  constructor(scriptURLs) {
+  constructor(injectURLs) {
     if (_AKUtils._instance)
       throw new Error('AKUtils already instantiated')
     _AKUtils._instance = this;
     this.#monitorRoots(document.documentElement);
-    this.#loadScripts(scriptURLs);
+    this.#loadScripts(injectURLs);
   }
 
   isElementNode(node) {
@@ -74,14 +77,32 @@ class _AKUtils {
     });
   }
 
-  #loadScripts(scriptURLs) {
-    if (scriptURLs == null) return;
-    var hrefs = scriptURLs.split(/[ ,]+/).map(v => v.trim()).filter(scriptURL => {
-      return (scriptURL.match(/:\/\//g) || []).length == 1;
-    }).forEach(scruptURL => {
-      var script = document.createElement('script');
-      script.src = scruptURL;
-      document.head.appendChild(script);
+  #loadScripts(injectURLs) {
+    var urls = (injectURLs == null) ? [] : injectURLs.split(/[ ,]+/).map(v => v.trim()).filter(injectURL => {
+      return (injectURL.match(/:\/\//g) || []).length == 1;
+    });
+    for (var url of urls) {
+      if (url.endsWith(".css"))
+        this.#cssURLs.push(url);
+      else {
+        var script = document.createElement('script');
+        script.src = url;
+        document.head.appendChild(script);
+      }
+    }
+    this.addRootListener(root => {
+      var hrefs = this.#cssURLs;
+      if (document.documentElement !== root)
+        root = document;
+      else
+        hrefs = hrefs.concat(this.#CUSTOM_CSS_URL);
+      for (var href of hrefs) {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet'
+        link.type = 'text/css';
+        link.href = href;
+        (root.head || root).prepend(link);
+      }
     });
 
   }
@@ -150,4 +171,4 @@ class _AKUtils {
 
 
 }
-window.AKUtils = new _AKUtils("{{SCRIPT_URLS}}");
+window.AKUtils = new _AKUtils('{{AUTHENTIK_INJECT_URLS}}');
