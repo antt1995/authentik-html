@@ -163,18 +163,16 @@ class _AKUtils {
     }
     var attachShadowNative = HTMLElement.prototype.attachShadow
     HTMLElement.prototype.attachShadow = function () {
-      console.log('attach shadow start')
-      var sh = attachShadowNative.apply(this, arguments)
-      addShadowRoot(sh.shadowRoot);
-      console.log('attach shadow end')
+      var shadowRoot = attachShadowNative.apply(this, arguments)
+      addShadowRoot(shadowRoot);
       return sh;
     }
     for (var i = 0; i < roots.length; i++) {
       var root = roots[i];
       var ni = document.createNodeIterator(root, NodeFilter.SHOW_ELEMENT, v => isShadowRootNode(v.shadowRoot));
-      var sh;
-      while (sh = ni.nextNode())
-        addShadowRoot(sh.shadowRoot);
+      var shadowHost;
+      while (shadowHost = ni.nextNode())
+        addShadowRoot(shadowHost.shadowRoot);
     }
   }
 
