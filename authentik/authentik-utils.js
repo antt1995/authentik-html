@@ -133,13 +133,12 @@ class _AKUtils {
     if (callback == null)
       return;
     let observeCallback = (mutations) => {
-      var nodes = mutations.flatMap(mutation => {
-        return Array.from(mutation.addedNodes)
-          .concat(mutation.target);
-      })
+      var nodes = mutations
+        .flatMap(mutation => Array.from(mutation.addedNodes).concat(mutation.target))
         .filter(v => v != null)
         .map(v => v.shadowRoot)
-        .filter(this.isShadowRootNode);
+        .filter(this.isShadowRootNode)
+        .filter(v => this.#observedNodes.indexOf(v) === -1);
       nodes.forEach(callback);
     };
     var observeOptions = { attributes: false, childList: true, subtree: true };
