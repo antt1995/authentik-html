@@ -37,5 +37,6 @@ done < <(env -0 | sort -z)
 sed -i "s|{{AUTHENTIK_INJECT_URLS}}|$AUTHENTIK_INJECT_URLS|g" $TMP_FILE
 cat $DIST_DIR/poly.js >> $TMP_FILE
 cat $TMP_FILE > $DIST_DIR/poly.js
+rm $TMP_FILE
 
 /usr/local/bin/dumb-init -- /lifecycle/ak worker
