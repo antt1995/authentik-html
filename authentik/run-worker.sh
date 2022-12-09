@@ -23,14 +23,14 @@ done
 if [ -z "$AUTHENTIK_UTILS_SCRIPT_URL" ]; then
     AUTHENTIK_UTILS_SCRIPT_URL=https://raw.githubusercontent.com/regbo/public-html/master/authentik/authentik-utils.js
 fi
-printf "\n//***** $AUTHENTIK_UTILS_SCRIPT_URL\n\n" >> $DIST_DIR/flow/FlowInterface.js
-curl -fsSL $AUTHENTIK_UTILS_SCRIPT_URL >> $DIST_DIR/flow/FlowInterface.js
+printf "\n//***** $AUTHENTIK_UTILS_SCRIPT_URL\n\n" >> $DIST_DIR/poly.js
+curl -fsSL $AUTHENTIK_UTILS_SCRIPT_URL >> $DIST_DIR/poly.js
 AUTHENTIK_INJECT_URLS=""
 while IFS='=' read -r -d '' n v; do
     if [[ $n = AUTHENTIK_INJECT_URL* ]]; then
         AUTHENTIK_INJECT_URLS+=$(echo " $v")
     fi
 done < <(env -0 | sort -z)
-sed -i "s|{{AUTHENTIK_INJECT_URLS}}|$AUTHENTIK_INJECT_URLS|g" $DIST_DIR/flow/FlowInterface.js
+sed -i "s|{{AUTHENTIK_INJECT_URLS}}|$AUTHENTIK_INJECT_URLS|g" $DIST_DIR/poly.js
 
 /usr/local/bin/dumb-init -- /lifecycle/ak worker

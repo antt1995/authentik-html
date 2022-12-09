@@ -10,6 +10,7 @@ class _AKUtils {
     if (_AKUtils._instance)
       throw new Error('AKUtils already instantiated')
     _AKUtils._instance = this;
+    this.#removeBranding();
     this.#monitorRoots(document.documentElement);
     this.#loadScripts(injectURLs);
   }
@@ -50,7 +51,6 @@ class _AKUtils {
   }
 
   querySelectorPromise(selector) {
-    var querySelectorNative = this.querySelectorNative;
     return new Promise((resolve) => {
       var resolved = false;
       var resolveWrapper = v => {
@@ -58,10 +58,10 @@ class _AKUtils {
         resolve(v);
       }
       this.addRootListener(root => {
-        function tryResolve() {
+        var tryResolve = () => {
           if (resolved)
             return true;
-          let el = querySelectorNative(selector, root);
+          let el = this.querySelectorNative(selector, root);
           if (el) {
             resolveWrapper(el);
             return true;
@@ -70,7 +70,7 @@ class _AKUtils {
         }
         if (tryResolve()) return;
         var observer = new MutationObserver((mutationRecords, observer) => {
-          var element = querySelectorNative(selector, root);
+          var element = this.querySelectorNative(selector, root);
           if (element != null) {
             resolveWrapper(element);
             observer.disconnect();
@@ -84,6 +84,29 @@ class _AKUtils {
         if (tryResolve()) observer.disconnect();
 
       });
+    });
+  }
+
+  #removeBranding(root) {
+    if (root == null) root = document;
+    var hrefSelector = (filter) => 'a[href^="' + filter + '"]';
+    var filters = ['https://goauthentik.io', 'https://unsplash.com']
+    var css = filters.map(hrefSelector).map(v => v + ' { display:none !important }').join('\n');
+    var cssTextNode = document.createTextNode(css);
+    var style = document.createElement('style');
+    style.appendChild(cssTextNode);
+    (root.head || root).prepend(style);
+    this.querySelectorPromise(hrefSelector(filters[0])).then(() => {
+      for (var filter of filters) {
+        var selector = hrefSelector(filter);
+        this.addRootListener(root => {
+          this.querySelectorAllNative(selector, root).forEach(element => {
+            var parentElement = element;
+            console.debug('removing', parentElement);
+            parentElement.remove();
+          });
+        });
+      }
     });
   }
 
