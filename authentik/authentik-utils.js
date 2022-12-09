@@ -33,7 +33,16 @@ class _AKUtils {
     this.#notifyRootListeners();
   };
 
-  querySelectorAllNative(root, selector) {
+  querySelectorNative(selector, root) {
+    if (root == null) root = document;
+    if (!root.__shady_native_querySelector)
+      return root.querySelector(selector);
+    else
+      return root.__shady_native_querySelector(selector);
+  }
+
+  querySelectorAllNative(selector, root) {
+    if (root == null) root = document;
     if (!root.__shady_native_querySelectorAll)
       return root.querySelectorAll(selector);
     else
@@ -51,7 +60,7 @@ class _AKUtils {
         function tryResolve() {
           if (resolved)
             return true;
-          let el = root.querySelector(selector);
+          let el = querySelectorNative(selector, root);
           if (el) {
             resolveWrapper(el);
             return true;
@@ -60,7 +69,7 @@ class _AKUtils {
         }
         if (tryResolve()) return;
         var observer = new MutationObserver((mutationRecords, observer) => {
-          var element = root.querySelector(selector);
+          var element = querySelectorNative(selector, root);
           if (element != null) {
             resolveWrapper(element);
             observer.disconnect();
