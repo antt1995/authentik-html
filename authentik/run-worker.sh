@@ -24,14 +24,14 @@ printf "\n\n//***** AKUtils Script Start *****\n\n" >> $DIST_DIR/poly.js
 if [ ! -z "$AUTHENTIK_UTILS_SCRIPT_URL" || command -v jq >/dev/null 2>&1 ]; then
     curl -fsSL $AUTHENTIK_UTILS_SCRIPT_URL >> $DIST_DIR/poly.js
 else
-    curl -fsSL https://api.github.com/repos/regbo/public-html/contents/authentik/authentik-utils.js | jq -r ".content" | base64 --decode  >> $DIST_DIR/poly.js
+    curl -fsSL https://api.github.com/repos/regbo/public-html/contents/authentik/authentik-utils.js | jq -r ".content" | base64 --decode >> $DIST_DIR/poly.js
 fi
 AUTHENTIK_INJECT_JS_URLS=""
 while IFS='=' read -r -d '' ENV_NAME VALUE; do
     if [[ $NAME = AUTHENTIK_INJECT_URL* ]]; then
         if [[ $VALUE = *.css ]]; then
             echo "injecting css:${VALUE}"
-            curl -fsSL $VALUE >> $DIST/custom.css
+            curl -fsSL $VALUE >> $DIST_DIR/custom.css
         else
             echo "injecting js:${VALUE}"
             AUTHENTIK_INJECT_JS_URLS+=$(echo " $VALUE")
