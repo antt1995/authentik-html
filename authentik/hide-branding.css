@@ -1,0 +1,7 @@
+a[href^="https://goauthentik.io"] {
+    display: none !important;
+}
+
+a[href^="https://unsplash.com"] {
+    display: none !important;
+}

@@ -4,7 +4,6 @@ class _AKUtils {
 
   #roots = [document.documentElement];
   #listenerContexts = []
-  #cssURLs = []
 
   constructor(injectURLs) {
     if (_AKUtils._instance)
@@ -87,58 +86,41 @@ class _AKUtils {
       });
     });
   }
-
-  #removeBranding(root) {
-    if (root == null) root = document;
-    var hrefSelector = (filter) => 'a[href^="' + filter + '"]';
-    var filters = ['https://goauthentik.io', 'https://unsplash.com']
-    var css = filters.map(hrefSelector).map(v => v + ' { display:none !important }').join('\n');
-    var cssTextNode = document.createTextNode(css);
-    var style = document.createElement('style');
-    style.appendChild(cssTextNode);
-    this.#prependRoot(root, style);
-    this.querySelectorPromise(hrefSelector(filters[0])).then(() => {
-      for (var filter of filters) {
-        var selector = hrefSelector(filter);
-        this.addRootListener(root => {
-          this.querySelectorAllNative(selector, root).forEach(element => {
-            var parentElement = element;
-            console.debug('removing', parentElement);
-            parentElement.remove();
-          });
-        });
-      }
-    });
-  }
-
+  
   #loadScripts(injectURLs) {
     var urls = (injectURLs == null) ? [] : injectURLs.split(/[ ,]+/).map(v => v.trim()).filter(injectURL => {
       return (injectURL.match(/:\/\//g) || []).length == 1;
     });
     for (var url of urls) {
-      if (url.endsWith(".css"))
-        this.#cssURLs.push(url);
-      else {
-        var script = document.createElement('script');
-        script.src = url;
-        document.head.appendChild(script);
-      }
+      var script = document.createElement('script');
+      script.src = url;
+      document.head.appendChild(script);
     }
     this.addRootListener(root => {
-      var hrefs = this.#cssURLs;
-      if (document.documentElement === root)
-        root = document;
-      else
-        hrefs = hrefs.concat(this.#CUSTOM_CSS_URL);
-      for (var href of hrefs) {
-        var link = document.createElement('link');
-        link.rel = 'stylesheet'
-        link.type = 'text/css';
-        link.href = href;
-        this.#prependRoot(root, link);
-      }
+      if (document.documentElement === root) return;
+      var link = document.createElement('link');
+      link.rel = 'stylesheet'
+      link.type = 'text/css';
+      link.href = this.#CUSTOM_CSS_URL;
+      this.#prependRoot(root, link);
     });
   }
+
+  #removeBranding() {
+    for (var filter of ['https://goauthentik.io', 'https://unsplash.com']) {
+      var selector = 'a[href^="' + filter + '"]';
+      this.querySelectorPromise(selector).then(() => {
+        this.addRootListener(root => {
+          this.querySelectorAllNative(selector, root).forEach(element => {
+            console.debug('removing', element.parentElement);
+            element.parentElement.remove();
+          });
+        });
+      });
+    }
+  }
+
+
 
   #notifyRootListeners() {
     for (var observedNode of this.#roots) {
@@ -174,9 +156,10 @@ class _AKUtils {
   }
 
   #prependRoot(root, element) {
+    if (root === document.documentElement) root = document;
     var parent = root.head || this.querySelectorNative('head', root) || root;
     parent.prepend(element);
   }
 
 }
-window.AKUtils = new _AKUtils('{{AUTHENTIK_INJECT_URLS}}');
+window.AKUtils = new _AKUtils('{{AUTHENTIK_INJECT_JS_URLS}}');

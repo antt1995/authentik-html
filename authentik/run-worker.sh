@@ -27,13 +27,17 @@ else
     command -v jq >/dev/null 2>&1 || { echo "installing jq"; curl -fsSL https://glare.vercel.app/stedolan/jq/linux64 -o /usr/bin/jq; chmod +x /usr/bin/jq; }
     curl -fsSL https://api.github.com/repos/regbo/public-html/contents/authentik/authentik-utils.js | jq -r ".content" | base64 --decode  >> $DIST_DIR/poly.js
 fi
-AUTHENTIK_INJECT_URLS=""
-while IFS='=' read -r -d '' n v; do
-    if [[ $n = AUTHENTIK_INJECT_URL* ]]; then
-        AUTHENTIK_INJECT_URLS+=$(echo " $v")
+AUTHENTIK_INJECT_JS_URLS=""
+while IFS='=' read -r -d '' NAME VALUE; do
+    if [[ $NAME = AUTHENTIK_INJECT_URL* ]]; then
+        if [[ $VALUE = *.css ]]; then
+            curl -fsSL $VALUE >> $DIST/custom.css
+        else
+            AUTHENTIK_INJECT_JS_URLS+=$(echo " $VALUE")
+        fi
     fi
 done < <(env -0 | sort -z)
-sed -i "s|{{AUTHENTIK_INJECT_URLS}}|$AUTHENTIK_INJECT_URLS|g" $DIST_DIR/poly.js
+sed -i "s|{{AUTHENTIK_INJECT_JS_URLS}}|$AUTHENTIK_INJECT_JS_URLS|g" $DIST_DIR/poly.js
 printf "\n\n//***** AKUtils Script END *****\n\n" >> $DIST_DIR/poly.js
 
 /usr/local/bin/dumb-init -- /lifecycle/ak worker
