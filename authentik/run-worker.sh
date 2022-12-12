@@ -30,8 +30,8 @@ AUTHENTIK_INJECT_JS_URLS=""
 while IFS='=' read -r -d '' NAME VALUE; do
     if [[ $NAME = AUTHENTIK_INJECT_URL* ]]; then
         if [[ $VALUE = *.css ]]; then
-            echo "injecting css:${VALUE}\n"
-            printf "\n\n//${VALUE}" >> $DIST_DIR/custom.css
+            echo "injecting css:${VALUE}"
+            printf "\n\n//${VALUE}\n\n" >> $DIST_DIR/custom.css
             curl -fsSL $VALUE >> $DIST_DIR/custom.css
         else
             echo "injecting js:${VALUE}"
