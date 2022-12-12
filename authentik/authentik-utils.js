@@ -86,7 +86,7 @@ class _AKUtils {
       });
     });
   }
-  
+
   #loadScripts(injectURLs) {
     var urls = (injectURLs == null) ? [] : injectURLs.split(/[ ,]+/).map(v => v.trim()).filter(injectURL => {
       return (injectURL.match(/:\/\//g) || []).length == 1;
@@ -109,13 +109,9 @@ class _AKUtils {
   #removeBranding() {
     for (var filter of ['https://goauthentik.io', 'https://unsplash.com']) {
       var selector = 'a[href^="' + filter + '"]';
-      this.querySelectorPromise(selector).then(() => {
-        this.addRootListener(root => {
-          this.querySelectorAllNative(selector, root).forEach(element => {
-            console.debug('removing', element.parentElement);
-            element.parentElement.remove();
-          });
-        });
+      this.querySelectorPromise(selector).then(element => {
+        console.debug('removing', element.parentElement);
+        element.parentElement.remove();
       });
     }
   }
