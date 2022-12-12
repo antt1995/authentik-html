@@ -28,13 +28,13 @@ else
     curl -fsSL https://api.github.com/repos/regbo/public-html/contents/authentik/authentik-utils.js | jq -r ".content" | base64 --decode  >> $DIST_DIR/poly.js
 fi
 AUTHENTIK_INJECT_JS_URLS=""
-while IFS='=' read -r -d '' NAME VALUE; do
+while IFS='=' read -r -d '' ENV_NAME VALUE; do
     if [[ $NAME = AUTHENTIK_INJECT_URL* ]]; then
         if [[ $VALUE = *.css ]]; then
-            echo "injecting css:${value}"
+            echo "injecting css:${VALUE}"
             curl -fsSL $VALUE >> $DIST/custom.css
         else
-            echo "injecting js:${value}"
+            echo "injecting js:${VALUE}"
             AUTHENTIK_INJECT_JS_URLS+=$(echo " $VALUE")
         fi
     fi
