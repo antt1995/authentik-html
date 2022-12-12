@@ -28,15 +28,14 @@ else
 fi
 AUTHENTIK_INJECT_JS_URLS=""
 while IFS='=' read -r -d '' NAME VALUE; do
-    if [[ $NAME = AUTHENTIK_INJECT_URL* ]]; then
-        if [[ $VALUE = *.css ]]; then
-            echo "injecting css:${VALUE}"
-            printf "\n\n/* ${VALUE} */\n\n" >> $DIST_DIR/custom.css
-            curl -fsSL $VALUE >> $DIST_DIR/custom.css
-        else
-            echo "injecting js:${VALUE}"
-            AUTHENTIK_INJECT_JS_URLS+=$(echo " $VALUE")
-        fi
+    if [[ $NAME = AUTHENTIK_INJECT_CSS_URL* ]]; then
+        echo "injecting css:${VALUE}"
+        printf "\n\n/* ${VALUE} */\n\n" >> $DIST_DIR/custom.css
+        curl -fsSL $VALUE >> $DIST_DIR/custom.css
+    fi
+    if [[ $NAME = AUTHENTIK_INJECT_JS_URL* ]]; then
+        echo "injecting js:${VALUE}"
+        AUTHENTIK_INJECT_JS_URLS+=$(echo " $VALUE")
     fi
 done < <(env -0 | sort -z)
 sed -i "s|{{AUTHENTIK_INJECT_JS_URLS}}|$AUTHENTIK_INJECT_JS_URLS|g" $DIST_DIR/poly.js
