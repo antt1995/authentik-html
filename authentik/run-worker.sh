@@ -1,7 +1,6 @@
 DIST_DIR=/dist
-WEB_DIST_DIR=web/dist
-echo "copying - ${WEB_DIST_DIR} -> $DIST_DIR"
-yes | cp -rfv "${WEB_DIST_DIR}"/* $DIST_DIR
+echo "copying - ${DIST_DIR}"
+yes | cp -rfv web/dist/* $DIST_DIR
 
 #---CUSTOM BACKGROUND
 if [ ! -z "$AUTHENTIK_FLOW_BACKGROUND_URL" ]; then
