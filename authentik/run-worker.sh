@@ -1,6 +1,6 @@
 DIST_DIR=/dist
 WEB_DIST_DIR=web/dist
-echo "copying ${WEB_DIST_DIR} to $DIST_DIR"
+echo "copying - ${WEB_DIST_DIR} -> $DIST_DIR"
 yes | cp -rfv "${WEB_DIST_DIR}"/* $DIST_DIR
 
 #---CUSTOM BACKGROUND
@@ -19,8 +19,7 @@ echo "AUTHENTIK_BRAND_ICON_URL:${AUTHENTIK_BRAND_ICON_URL}"
 for FILE in $DIST_DIR/flow/*; do
     FILTERS="https://goauthentik.io https://unsplash.com"
     for FILTER in $FILTERS; do
-        echo "FILTER:${FILTER}"
-        sed -i "s|href=\"$FILTER|style=\"display:none !important\" href=\"$FILTER|g" $FILE
+        sed -i "{q100};s|href=\"$FILTER|style=\"display:none !important\" href=\"$FILTER|g" $FILE && echo "hid footer content - ${FILTER} in ${FILE}"
     done
 done
 
@@ -35,12 +34,12 @@ fi
 AUTHENTIK_INJECT_JS_URLS=""
 while IFS='=' read -r -d '' NAME VALUE; do
     if [[ $NAME = AUTHENTIK_INJECT_CSS_URL* ]]; then
-        echo "${NAME}:${VALUE}"
+        echo "custom css - ${NAME}:${VALUE}"
         printf "\n\n/* ${VALUE} */\n\n" >> $DIST_DIR/custom.css
         curl -fsSL $VALUE >> $DIST_DIR/custom.css
     fi
     if [[ $NAME = AUTHENTIK_INJECT_JS_URL* ]]; then
-        echo "${NAME}:${VALUE}"
+        echo "custom js - ${NAME}:${VALUE}"
         AUTHENTIK_INJECT_JS_URLS+=$(echo " $VALUE")
     fi
 done < <(env -0 | sort -z)
