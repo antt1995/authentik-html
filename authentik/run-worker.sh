@@ -5,14 +5,14 @@ yes | cp -rfv web/dist/* $DIST_DIR
 #---CUSTOM BACKGROUND
 if [ ! -z "$AUTHENTIK_FLOW_BACKGROUND_URL" ]; then
     TMP_FILE="$(mktemp)"
-    curl -fsSL -o $TMP_FILE $AUTHENTIK_FLOW_BACKGROUND_URL
+    curl -fsSL -v -o $TMP_FILE $AUTHENTIK_FLOW_BACKGROUND_URL
     mv $TMP_FILE $DIST_DIR/assets/images/flow_background.jpg
 fi
 
 #---CUSTOM ICON
 if [ ! -z "$AUTHENTIK_BRAND_ICON_URL" ]; then
     TMP_FILE="$(mktemp)"
-    curl -fsSL -o $TMP_FILE $AUTHENTIK_BRAND_ICON_URL
+    curl -fsSL -v -o $TMP_FILE $AUTHENTIK_BRAND_ICON_URL
     mv $TMP_FILE $DIST_DIR/assets/icons/icon_left_brand.svg
 fi
 
