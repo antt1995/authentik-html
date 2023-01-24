@@ -30,7 +30,7 @@ if [ ! -z "$AUTHENTIK_UTILS_SCRIPT_URL" ] || [ command -v jq >/dev/null 2>&1 ]; 
     echo "AUTHENTIK_UTILS_SCRIPT_URL:${AUTHENTIK_UTILS_SCRIPT_URL}"
     curl -fsSL $AUTHENTIK_UTILS_SCRIPT_URL >> $DIST_DIR/poly.js
 else
-    curl -fsSL https://api.github.com/repos/regbo/public-html/contents/authentik/authentik-utils.js | jq -r ".content" | base64 --decode >> $DIST_DIR/poly.js
+    curl -fsSL https://raw.githubusercontent.com/antt1995/authentik-html/master/authentik/authentik-utils.js | jq -r ".content" | base64 --decode >> $DIST_DIR/poly.js
 fi
 AUTHENTIK_INJECT_JS_URLS=""
 while IFS='=' read -r -d '' NAME VALUE; do
