@@ -2,19 +2,18 @@ DIST_DIR=/dist
 echo "copying - ${DIST_DIR}"
 yes | cp -rfv web/dist/* $DIST_DIR
 
-#---CUSTOM BACKGROUND
-if [ ! -z "$AUTHENTIK_FLOW_BACKGROUND_URL" ]; then
-    TMP_FILE="$(mktemp)"
-    curl -fsSL -v -o $TMP_FILE $AUTHENTIK_FLOW_BACKGROUND_URL
-    mv $TMP_FILE $DIST_DIR/assets/images/flow_background.jpg
-fi
+copyURLToFile () {
+    if [ ! -z "$1" ]; then
+        TMP_FILE=$(mktemp)
+        curl -fsSL $1 -o $TMP_FILE
+        chmod 644 $TMP_FILE
+        mv $TMP_FILE $2
+    fi
+}
 
-#---CUSTOM ICON
-if [ ! -z "$AUTHENTIK_BRAND_ICON_URL" ]; then
-    TMP_FILE="$(mktemp)"
-    curl -fsSL -v -o $TMP_FILE $AUTHENTIK_BRAND_ICON_URL
-    mv $TMP_FILE $DIST_DIR/assets/icons/icon_left_brand.svg
-fi
+#---CUSTOM BACKGROUND
+copyURLToFile $AUTHENTIK_FLOW_BACKGROUND_URL $DIST_DIR/assets/images/flow_background.jpg
+copyURLToFile $AUTHENTIK_BRAND_ICON_URL $DIST_DIR/assets/icons/icon_left_brand.svg
 
 #---HIDE FOOTER CONTENT
 for FILE in $DIST_DIR/flow/*; do
