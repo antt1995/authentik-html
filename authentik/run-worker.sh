@@ -1,6 +1,6 @@
 DIST_DIR=/dist
 echo "copying - ${DIST_DIR}"
-yes | cp -rfv web/dist/* $DIST_DIR
+yes | cp -rfvu web/dist/* $DIST_DIR
 
 copyURLToFile () {
     if [ ! -z "$1" ]; then
